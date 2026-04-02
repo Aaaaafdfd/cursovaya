@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>UI Canvas — Искусство интерфейсов веб-приложений</title>
+    <!-- Google Fonts & Modern Normalize -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #fafcff;
+            color: #111827;
+            line-height: 1.5;
+            scroll-behavior: smooth;
+        }
+
+        /* Typography & containers */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        section {
+            padding: 80px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        section:last-child {
+            border-bottom: none;
+        }
+
+        h1 {
+            font-size: clamp(2.8rem, 8vw, 4.8rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #0F2B3D, #1B4A6F, #2563eb);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h2:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: #3b82f6;
+            border-radius: 4px;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .hero-sub {
+            font-size: 1.25rem;
+            color: #2c3e50;
+            max-width: 720px;
+            margin-top: 1rem;
+            font-weight: 400;
+        }
+
+        /* buttons & nav */
+        .navbar {
+            position: sticky;
+            top: 0;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(12px);
+            z-index: 100;
+            border-bottom: 1px solid #eef2f6;
+            padding: 1rem 0;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            font-weight: 500;
+            color: #1f2937;
+            transition: color 0.2s;
+            font-size: 1rem;
+        }
+
+        .nav-links a:hover {
+            color: #2563eb;
+        }
+
+        /* cards & grid */
+        .grid-2col, .principles-grid, .trends-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 1.8rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.05);
+            transition: all 0.25s ease;
+            border: 1px solid #eef2ff;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 30px -12px rgba(0,0,0,0.1);
+            border-color: #cbdffc;
+        }
+
+        .icon-emoj {
+            font-size: 2.4rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .pill {
+            background: #eef2ff;
+            padding: 0.25rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #1e40af;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        /* interactive demo section */
+        .demo-container {
+            background: linear-gradient(145deg, #f1f5f9 0%, #ffffff 100%);
+            border-radius: 2rem;
+            padding: 2rem;
+            margin-top: 2rem;
+            border: 1px solid rgba(59,130,246,0.2);
+            box-shadow: 0 12px 24px -12px rgba(0,0,0,0.08);
+        }
+
+        .mock-ui {
+            background: white;
+            border-radius: 28px;
+            padding: 1.5rem;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+        }
+
+        .mock-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .toggle-group {
+            display: flex;
+            gap: 0.5rem;
+            background: #f1f5f9;
+            padding: 0.25rem;
+            border-radius: 60px;
+        }
+
+        .toggle-btn {
+            border: none;
+            background: transparent;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            font-size: 0.85rem;
+        }
+
+        .toggle-btn.active {
+            background: #2563eb;
+            color: white;
+            box-shadow: 0 2px 6px rgba(37,99,235,0.3);
+        }
+
+        .card-item {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: 0.2s;
+            border: 1px solid #e2e8f0;
+        }
+
+        .card-item:hover {
+            background: #ffffff;
+            border-color: #94a3b8;
+        }
+
+        .status-badge {
+            width: 12px;
+            height: 12px;
+            border-radius: 20px;
+            background: #10b981;
+        }
+
+        .btn-demo {
+            background: #0f172a;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-demo:hover {
+            background: #1e293b;
+            transform: scale(0.98);
+        }
+
+        .feedback-msg {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: #2c3e50;
+            background: #eef2ff;
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+        }
+
+        /* footer */
+        footer {
+            background: #0b1a2a;
+            color: #cbd5e1;
+            padding: 2rem 0;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 720px) {
+            .container {
+                padding: 0 24px;
+            }
+            section {
+                padding: 60px 0;
+            }
+            .nav-links {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container">
+        <div class="nav-links">
+            <a href="#intro">О UI</a>
+            <a href="#principles">Принципы</a>
+            <a href="#elements">Элементы</a>
+            <a href="#trends">Тренды</a>
+            <a href="#demo">Интерактив</a>
+        </div>
+    </div>
+</nav>
+
+<main>
+    <!-- Hero section -->
+    <section id="intro" style="padding-top: 100px;">
+        <div class="container">
+            <div class="pill" style="background:#e0f2fe; color:#0369a1;">✨ Пользовательский интерфейс</div>
+            <h1>Интерфейс веб-приложений:<br>дизайн, который чувствует</h1>
+            <p class="hero-sub">User Interface (UI) — это мост между человеком и цифровым продуктом. Каждый клик, анимация, сетка и цвет формируют впечатление. Исследуем, как создавать удобные, эстетичные и отзывчивые интерфейсы.</p>
+            <div style="margin-top: 2rem;">
+                <span style="background:#eef2ff; padding:0.3rem 1rem; border-radius:30px; font-size:0.85rem;">🎯 78% пользователей судят о доверии по дизайну</span>
+                <span style="background:#eef2ff; padding:0.3rem 1rem; border-radius:30px; margin-left:0.8rem; font-size:0.85rem;">⚡ 0.1 сек — порог мгновенной реакции</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Principles section -->
+    <section id="principles">
+        <div class="container">
+            <h2>Ключевые принципы UI</h2>
+            <p style="margin-bottom: 1rem; max-width: 700px;">Современный UI строится на ясности, контроле и предсказуемости. Лучшие интерфейсы невидимы — они направляют пользователя без усилий.</p>
+            <div class="principles-grid">
+                <div class="card">
+                    <div class="icon-emoj">🎯</div>
+                    <h3>Иерархия & акценты</h3>
+                    <p>Визуальный вес направляет внимание. Размер, цвет, контраст помогают понять, что важно в первую очередь.</p>
+                </div>
+                <div class="card">
+                    <div class="icon-emoj">🔄</div>
+                    <h3>Последовательность</h3>
+                    <p>Единые паттерны, иконки и поведение снижают когнитивную нагрузку. Пользователь учится один раз.</p>
+                </div>
+                <div class="card">
+                    <div class="icon-emoj">📱</div>
+                    <h3>Адаптивность</h3>
+                    <p>От мобильных до десктопа — интерфейс должен плавно подстраиваться под любой экран и устройство.</p>
+                </div>
+                <div class="card">
+                    <div class="icon-emoj">♿</div>
+                    <h3>Доступность (A11Y)</h3>
+                    <p>Контрастность, навигация с клавиатуры, ARIA-метки — интерфейс для каждого человека.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Elements of UI -->
+    <section id="elements">
+        <div class="container">
+            <h2>Строительные блоки интерфейса</h2>
+            <p style="margin-bottom: 1rem;">Кнопки, карточки, навигация, формы — атомы, из которых складываются удобные веб-приложения.</p>
+            <div class="grid-2col">
+                <div class="card">
+                    <div class="icon-emoj">🔘</div>
+                    <h3>Кнопки & CTA</h3>
+                    <p>Главные точки взаимодействия. Размер, отступы, состояние (hover, active, disabled) — важнейшие детали.</p>
+                    <div style="display:flex; gap:12px; margin-top:16px;">
+                        <button style="background:#2563eb; border:none; color:white; padding:8px 20px; border-radius:40px; cursor:default;">Primary</button>
+                        <button style="background:transparent; border:1px solid #2563eb; padding:8px 20px; border-radius:40px; cursor:default;">Secondary</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="icon-emoj">📝</div>
+                    <h3>Формы & поля ввода</h3>
+                    <p>Лейблы, плейсхолдеры, валидация в реальном времени. Уменьшаем трение при вводе данных.</p>
+                </div>
+                <div class="card">
+                    <div class="icon-emoj">🧭</div>
+                    <h3>Навигация</h3>
+                    <p>Меню, хлебные крошки, табы — архитектура интерфейса должна быть интуитивной как карта города.</p>
+                </div>
+                <div class="card">
+                    <div class="icon-emoj">💬</div>
+                    <h3>Обратная связь</h3>
+                    <p>Тост-уведомления, лоудеры, анимации подтверждают действие. Пользователь никогда не должен гадать.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modern trends -->
+    <section id="trends">
+        <div class="container">
+            <h2>Современные тренды UI/UX</h2>
+            <p>От неоморфизма до микро-анимаций: эстетика веб-приложений стремится к эмоциональности и производительности.</p>
+            <div class="trends-grid">
+                <div class="card">
+                    <div class="icon-emoj">✨</div>
+                    <h3>Микро-анимации</h3>
+                    <p>Плавные переходы, пульсация, обратная связь на hover — добавляют живости и понятности.</p>
+                </div>
+                <div class="card">
+                    <div class="icon-emoj">🌗</div>
+                    <h3>Темная тема</h3>
+                    <p>Адаптация под системные настройки и выбор пользователя. Снижает нагрузку на глаза.</p>
+                </div>
+                <div class="card">
+                    <div class="icon-emoj">🎨</div>
+                    <h3>Glassmorphism</h3>
+                    <p>Стеклянная эстетика, размытие, слоистость создают глубину и современный вид.</p>
+                </div>
+                <div class="card">
+                    <div class="icon-emoj">⚡</div>
+                    <h3>Web Vitals & производительность</h3>
+                    <p>Скорость загрузки — часть UI. Core Web Vitals влияют на ранжирование и удержание.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive UI demo: живой пример изменения интерфейса -->
+    <section id="demo">
+        <div class="container">
+            <h2>🕹️ Интерактивная демонстрация: настройка UI</h2>
+            <p>Попробуйте изменить визуальный стиль карточек и посмотрите, как меняется восприятие интерфейса. Нажмите на элемент, чтобы получить обратную связь — это основа качественного UI.</p>
+            <div class="demo-container">
+                <div class="mock-ui" id="mockUiPanel">
+                    <div class="mock-header">
+                        <div style="font-weight:700; font-size:1.3rem;">🎧 Панель задач</div>
+                        <div class="toggle-group" id="styleToggleGroup">
+                            <button class="toggle-btn active" data-style="default">Стандарт</button>
+                            <button class="toggle-btn" data-style="glass">Glassmorphism</button>
+                            <button class="toggle-btn" data-style="bold">Высокий контраст</button>
+                        </div>
+                    </div>
+                    <div id="dynamicCardsContainer">
+                        <!-- динамические карточки задач -->
+                        <div class="card-item" data-id="1">
+                            <div class="status-badge"></div>
+                            <div style="flex:1"><strong>Завершить дизайн-ревью</strong><br><span style="font-size:0.75rem; color:#475569;">Интерактивный прототип</span></div>
+                            <button class="btn-demo small-action" data-action="complete">✓ Готово</button>
+                        </div>
+                        <div class="card-item" data-id="2">
+                            <div class="status-badge"></div>
+                            <div style="flex:1"><strong>Написать UI-кит документацию</strong><br><span style="font-size:0.75rem; color:#475569;">Атомарный дизайн</span></div>
+                            <button class="btn-demo small-action" data-action="complete">✓ Готово</button>
+                        </div>
+                        <div class="card-item" data-id="3">
+                            <div class="status-badge"></div>
+                            <div style="flex:1"><strong>Протестировать доступность</strong><br><span style="font-size:0.75rem; color:#475569;">WCAG 2.1 Level AA</span></div>
+                            <button class="btn-demo small-action" data-action="complete">✓ Готово</button>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div id="feedbackArea" class="feedback-msg">✨ Нажмите на кнопку задачи — получите отклик</div>
+                        <button id="resetDemoBtn" class="btn-demo" style="background:#334155;">Сбросить все задачи</button>
+                    </div>
+                </div>
+            </div>
+            <p style="margin-top: 1rem; font-size:0.85rem; color:#4b5563;">💡 Хороший интерфейс всегда даёт обратную связь: при клике, переключении темы, завершении действия. Каждый элемент должен быть отзывчивым.</p>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <p>🎨 UI Canvas — исследование пользовательского интерфейса веб-приложений. Проект демонстрирует принципы, элементы и важность человеко-ориентированного дизайна.</p>
+        <p style="margin-top: 1rem;">Интерактивные элементы, адаптивная сетка, доступность — строим будущее интерфейсов.</p>
+    </div>
+</footer>
+
+<script>
+    (function() {
+        // ---- Переключение стилей UI (динамическая демонстрация)
+        const uiPanel = document.getElementById('mockUiPanel');
+        const styleBtns = document.querySelectorAll('#styleToggleGroup .toggle-btn');
+        const cardsContainer = document.getElementById('dynamicCardsContainer');
+        const feedbackDiv = document.getElementById('feedbackArea');
+        const resetBtn = document.getElementById('resetDemoBtn');
+        
+        // Текущее состояние задач (для сброса)
+        let tasksData = [
+            { id: 1, title: "Завершить дизайн-ревью", desc: "Интерактивный прототип", completed: false },
+            { id: 2, title: "Написать UI-кит документацию", desc: "Атомарный дизайн", completed: false },
+            { id: 3, title: "Протестировать доступность", desc: "WCAG 2.1 Level AA", completed: false }
+        ];
+
+        // Функция отрисовки карточек на основе tasksData
+        function renderCards() {
+            if (!cardsContainer) return;
+            cardsContainer.innerHTML = '';
+            tasksData.forEach(task => {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'card-item';
+                cardDiv.setAttribute('data-id', task.id);
+                // если задача завершена, добавим визуальный эффект
+                if (task.completed) {
+                    cardDiv.style.opacity = '0.7';
+                    cardDiv.style.background = '#f1f5f9';
+                    cardDiv.style.textDecoration = 'line-through';
+                } else {
+                    cardDiv.style.opacity = '1';
+                    cardDiv.style.background = '';
+                    cardDiv.style.textDecoration = 'none';
+                }
+                const badge = document.createElement('div');
+                badge.className = 'status-badge';
+                if (task.completed) badge.style.background = '#94a3b8';
+                else badge.style.background = '#10b981';
+                
+                const textDiv = document.createElement('div');
+                textDiv.style.flex = '1';
+                textDiv.innerHTML = `<strong>${escapeHtml(task.title)}</strong><br><span style="font-size:0.75rem; color:#475569;">${escapeHtml(task.desc)}</span>`;
+                
+                const actionBtn = document.createElement('button');
+                actionBtn.className = 'btn-demo small-action';
+                actionBtn.innerText = task.completed ? '↩️ Вернуть' : '✓ Готово';
+                actionBtn.style.padding = '4px 12px';
+                actionBtn.style.fontSize = '0.75rem';
+                actionBtn.style.background = task.completed ? '#475569' : '#0f172a';
+                actionBtn.setAttribute('data-action', task.completed ? 'undo' : 'complete');
+                
+                // событие клика на кнопку
+                actionBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (task.completed) {
+                        task.completed = false;
+                        showFeedback(`Задача "${task.title}" возвращена в работу`);
+                    } else {
+                        task.completed = true;
+                        showFeedback(`✅ "${task.title}" выполнена! Отличная обратная связь.`);
+                    }
+                    renderCards();
+                    // сохраним также дополнительные стили (например для анимации)
+                });
+                
+                cardDiv.appendChild(badge);
+                cardDiv.appendChild(textDiv);
+                cardDiv.appendChild(actionBtn);
+                cardsContainer.appendChild(cardDiv);
+            });
+        }
+        
+        // простой escpae для защиты
+        function escapeHtml(str) {
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+                return c;
+            });
+        }
+        
+        function showFeedback(msg) {
+            if (feedbackDiv) {
+                feedbackDiv.textContent = msg;
+                feedbackDiv.style.background = "#e0e7ff";
+                feedbackDiv.style.transition = "0.1s";
+                setTimeout(() => {
+                    if (feedbackDiv) feedbackDiv.style.background = "#eef2ff";
+                }, 800);
+            }
+        }
+        
+        // Сброс всех задач
+        function resetTasks() {
+            tasksData.forEach(t => t.completed = false);
+            renderCards();
+            showFeedback("🔄 Все задачи сброшены. Интерфейс вернулся к исходному состоянию.");
+        }
+        
+        if (resetBtn) {
+            resetBtn.addEventListener('click', resetTasks);
+        }
+        
+        // Стилизация темы (меняем оформление mock-ui)
+        function setUIStyle(styleName) {
+            if (!uiPanel) return;
+            // убираем возможные старые классы
+            uiPanel.classList.remove('glass-style', 'bold-style');
+            if (styleName === 'glass') {
+                uiPanel.style.background = "rgba(255,255,255,0.55)";
+                uiPanel.style.backdropFilter = "blur(12px)";
+                uiPanel.style.border = "1px solid rgba(255,255,255,0.7)";
+                uiPanel.style.boxShadow = "0 20px 35px -12px rgba(0,0,0,0.2)";
+                uiPanel.classList.add('glass-style');
+                showFeedback("🧊 Применён стиль Glassmorphism — полупрозрачность и размытие");
+            } 
+            else if (styleName === 'bold') {
+                uiPanel.style.background = "#0f172a";
+                uiPanel.style.backdropFilter = "none";
+                uiPanel.style.border = "2px solid #facc15";
+                uiPanel.style.boxShadow = "0 8px 0 #0f172a";
+                uiPanel.style.color = "#f1f5f9";
+                // также стилизуем дочерние элементы для контраста, но не ломаем читаемость
+                const items = document.querySelectorAll('.card-item');
+                items.forEach(item => {
+                    item.style.background = "#1e293b";
+                    item.style.color = "#f8fafc";
+                    item.style.borderColor = "#facc15";
+                });
+                const btns = document.querySelectorAll('.btn-demo');
+                btns.forEach(btn => btn.style.background = "#facc15");
+                showFeedback("🔆 Высокий контраст: улучшенная читаемость для accessibility");
+            }
+            else { // default
+                uiPanel.style.background = "white";
+                uiPanel.style.backdropFilter = "none";
+                uiPanel.style.border = "1px solid #eef2ff";
+                uiPanel.style.boxShadow = "0 12px 30px rgba(0,0,0,0.05)";
+                uiPanel.style.color = "#111827";
+                const items = document.querySelectorAll('.card-item');
+                items.forEach(item => {
+                    item.style.background = "#f8fafc";
+                    item.style.color = "#111827";
+                    item.style.borderColor = "#e2e8f0";
+                });
+                const btns = document.querySelectorAll('.btn-demo');
+                btns.forEach(btn => {
+                    if(btn.innerText.includes('Готово') || btn.innerText.includes('Вернуть')) {
+                        if(btn.innerText === '✓ Готово') btn.style.background = "#0f172a";
+                        else if(btn.innerText === '↩️ Вернуть') btn.style.background = "#475569";
+                        else btn.style.background = "#334155";
+                    } else {
+                        btn.style.background = "#334155";
+                    }
+                });
+                showFeedback("🌿 Стандартный интерфейс: чистота и ясность.");
+            }
+            // дополнительная коррекция при bold стиле для карточек, обновляем после рендера 
+            if (styleName === 'bold') {
+                const items = document.querySelectorAll('.card-item');
+                items.forEach(item => {
+                    item.style.background = "#1e293b";
+                    item.style.color = "#f1f5f9";
+                    item.style.borderColor = "#facc15";
+                });
+                const btns = document.querySelectorAll('.btn-demo');
+                btns.forEach(btn => btn.style.background = "#facc15");
+            } else if (styleName !== 'bold') {
+                const items = document.querySelectorAll('.card-item');
+                items.forEach(item => {
+                    if(styleName === 'glass') item.style.background = "rgba(255,255,255,0.7)";
+                    else item.style.background = "#f8fafc";
+                    item.style.color = "#111827";
+                });
+                const btns = document.querySelectorAll('.btn-demo');
+                btns.forEach(btn => {
+                    if(btn.innerText.includes('Готово') && btn.style.background !== "#0f172a") btn.style.background = "#0f172a";
+                    else if(btn.innerText.includes('Вернуть')) btn.style.background = "#475569";
+                });
+            }
+        }
+        
+        // Добавим обработчики на кнопки стилей
+        styleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const style = btn.getAttribute('data-style');
+                styleBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                setUIStyle(style);
+            });
+        });
+        
+        // Начальный рендер задач
+        renderCards();
+        // инициализация стандартного стиля (дефолтный)
+        setUIStyle('default');
+        
+        // глобальная обработка для любых карточек: дополнительный клик на сам элемент? но у нас уже есть кнопки. Добавим эффект наведения
+        const styleObserver = () => {
+            // легкая динамическая синхронизация для карточек после рендера
+        };
+        // Наблюдатель за изменениями карточек (чтобы стили не терялись при ререндере)
+        const observer = new MutationObserver(() => {
+            const activeStyle = document.querySelector('#styleToggleGroup .toggle-btn.active')?.getAttribute('data-style') || 'default';
+            setUIStyle(activeStyle);
+        });
+        if (cardsContainer) observer.observe(cardsContainer, { childList: true, subtree: true });
+        
+        // также добавим обработку кнопок изначально, если сброс стилей не ломает
+        window.addEventListener('load', () => {
+            setUIStyle('default');
+        });
+    })();
+</script>
+</body>
+</html>
